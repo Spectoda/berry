@@ -142,6 +142,7 @@ struct bvm {
     bvalue hook;
     bbyte hookmask;
 #endif
+    void* usermagic; /* magic user data */
 };
 
 #define NONE_FLAG           0

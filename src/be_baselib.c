@@ -36,6 +36,18 @@ int be_baselib_assert(bvm *vm)
 
 int be_baselib_print(bvm *vm)
 {
+    {
+        // ! Be aware that [🍇] only shows for print() berry call.
+        // ! System calls, debug dumps and other will not show [🍇]
+        be_writebuffer("[🍇]: ", 8);
+
+        // TODO figure out which controller instance is printing the berry code
+        // be_writebuffer("🖥️ $CONTR: \t[🍇]: ", 25); 
+
+        // TODO? print "🖥️ $CONTR: \t[🍇]: " prefix for all berry printed characters. Not only from print() function
+        // TODO? may involve changing stdout for berry code only
+    }
+
     int i, argc = be_top(vm);
     for (i = 1; i <= argc; ++i) {
         const char *str = be_tostring(vm, i);

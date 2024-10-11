@@ -117,11 +117,11 @@ static bbool obj2int(bvm *vm, bvalue *var, bint *val)
     binstance *obj = var_toobj(var);
     bstring *toint = str_literal(vm, "toint");
     /* get operator method */
-    // TODO what if `tobool` is static
+    // TODO what if `toint` is static
     int type = be_instance_member(vm, obj, toint, vm->top);
     if (type != BE_NONE && type != BE_NIL) {
         vm->top[1] = *var; /* move self to argv[0] */
-        be_dofunc(vm, vm->top, 1); /* call method 'tobool' */
+        be_dofunc(vm, vm->top, 1); /* call method 'toint' */
         /* check the return value */
         if (var_isint(vm->top)) {
             *val = var_toint(vm->top);

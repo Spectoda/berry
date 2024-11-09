@@ -2345,6 +2345,16 @@ BERRY_API void be_writebuffer(const char *buffer, size_t length);
  */
 BERRY_API char* be_readstring(char *buffer, size_t size);
 
+
+/**
+ * @fn void be_gc_collect(bvm*)
+ * @note use with caution
+ * @brief VM Garbage Collector force collection
+ *
+ * @param vm virtual machine instance
+ */
+BERRY_API void be_gc_collect(bvm *vm);
+
 #ifdef __cplusplus
 }
 #endif

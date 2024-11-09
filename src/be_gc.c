@@ -555,7 +555,7 @@ size_t be_gc_memcount(bvm *vm)
     return vm->gc.usage;
 }
 
-void be_gc_collect(bvm *vm)
+BERRY_API void be_gc_collect(bvm *vm)
 {
     if (vm->gc.status & GC_HALT) {
         return; /* the GC cannot run for some reason */

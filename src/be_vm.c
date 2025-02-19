@@ -48,14 +48,14 @@
   #define DEBUG_HOOK()
 #endif
 
-#if BE_USE_PERF_COUNTERS
+#if BE_USE_PERF_COUNTERS || BE_USE_VM_HEARTBEAT_COUNTER
   #define COUNTER_HOOK() \
     vm->counter_ins++;
 #else
   #define COUNTER_HOOK()
 #endif
 
-#if BE_USE_PERF_COUNTERS
+#if BE_USE_PERF_COUNTERS || BE_USE_VM_HEARTBEAT_COUNTER
   #define VM_HEARTBEAT() \
     if ((vm->counter_ins & ((1<<(BE_VM_OBSERVABILITY_SAMPLING - 1))-1) ) == 0) { /* call every 2^BE_VM_OBSERVABILITY_SAMPLING instructions */    \
         if (vm->obshook != NULL)                                                    \
@@ -501,8 +501,10 @@ BERRY_API bvm* be_vm_new(void)
     vm->bytesmaxsize = BE_BYTES_MAX_SIZE;
     vm->obshook = NULL;
     vm->ctypefunc = NULL;
-#if BE_USE_PERF_COUNTERS
+#if BE_USE_PERF_COUNTERS || BE_USE_VM_HEARTBEAT_COUNTER
     vm->counter_ins = 0;
+#endif
+#if BE_USE_PERF_COUNTERS
     vm->counter_enter = 0;
     vm->counter_call = 0;
     vm->counter_get = 0;

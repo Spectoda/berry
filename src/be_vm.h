@@ -112,8 +112,10 @@ struct bvm {
     bbyte compopt; /* compilation options */
     size_t bytesmaxsize; /* max allowed size for bytes() object, default 32kb but can be increased */
     bobshook obshook;
-#if BE_USE_PERF_COUNTERS
+#if BE_USE_PERF_COUNTERS || BE_USE_VM_HEARTBEAT_COUNTER
     uint32_t counter_ins; /* instructions counter */
+#endif
+#if BE_USE_PERF_COUNTERS
     uint32_t counter_enter; /* counter for times the VM was entered */
     uint32_t counter_call; /* counter for calls, VM or native */
     uint32_t counter_get; /* counter for GETMBR or GETMET */

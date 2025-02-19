@@ -82,6 +82,13 @@
  **/
 #define BE_USE_PERF_COUNTERS            1
 
+/* Macro: BE_USE_VM_HEARTBEAT_COUNTER
+ * Enable heartbeat counter even if BE_USE_PERF_COUNTERS is 0.
+ * This allows to track VM activity independently of performance counters.
+ * Default: 1
+ **/
+#define BE_USE_VM_HEARTBEAT_COUNTER     1
+
 /* Macro: BE_VM_OBSERVABILITY_SAMPLING
  * If BE_USE_PERF_COUNTERS == 1
  * then the observability hook is called regularly in the VM loop

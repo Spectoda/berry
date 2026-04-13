@@ -463,6 +463,25 @@ static void make_range(bvm *vm, bvalue lower, bvalue upper)
     vm->top -= 3;
 }
 
+static void multiply_str(bvm *vm, bvalue *a_value, bvalue *count)
+{
+    bint n = 0;
+    bstring *result;
+    bstring *str = var_tostr(a_value);
+    
+    /* Convert count to integer */
+    if (var_isint(count)) {
+        n = var_toint(count);
+    } else if (var_isbool(count)) {
+        n = var_tobool(count) ? 1 : 0;
+    } else {
+        binop_error(vm, "*", a_value, count);
+    }
+    
+    result = be_strmul(vm, str, n);
+    var_setstr(vm->top, result);
+}
+
 static void connect_str(bvm *vm, bstring *a, bvalue *b)
 {
     bstring *s;
@@ -663,6 +682,10 @@ newframe: /* a new call frame */
                 var_setstr(dst, s);
             } else if (var_isinstance(a)) {
                 ins_binop(vm, "+", ins);
+            } else if (var_iscomptr(a) && var_isint(b)) {
+                uint8_t * p = (uint8_t*) var_toobj(a);
+                p += var_toint(b);
+                var_setcomptr(dst, p);
             } else {
                 binop_error(vm, "+", a, b);
             }
@@ -677,6 +700,10 @@ newframe: /* a new call frame */
                 var_setreal(dst, x - y);
             } else if (var_isinstance(a)) {
                 ins_binop(vm, "-", ins);
+            } else if (var_iscomptr(a) && var_isint(b)) {
+                uint8_t * p = (uint8_t*) var_toobj(a);
+                p -= var_toint(b);
+                var_setcomptr(dst, p);
             } else {
                 binop_error(vm, "-", a, b);
             }
@@ -689,6 +716,10 @@ newframe: /* a new call frame */
             } else if (var_isnumber(a) && var_isnumber(b)) {
                 breal x = var2real(a), y = var2real(b);
                 var_setreal(dst, x * y);
+            } else if (var_isstr(a) && (var_isint(b) || var_isbool(b))) {
+                multiply_str(vm, a, b);
+                reg = vm->reg;
+                *RA() = *vm->top; /* copy result to R(A) */
             } else if (var_isinstance(a)) {
                 ins_binop(vm, "*", ins);
             } else {
@@ -1029,6 +1060,9 @@ newframe: /* a new call frame */
                 bstring *s = be_strindex(vm, var_tostr(b), c);
                 reg = vm->reg;
                 var_setstr(RA(), s);
+            } else if (var_iscomptr(b) && var_isint(c)) {
+                uint8_t * p = var_toobj(b);
+                var_setint(RA(), p[var_toint(c)]);
             } else {
                 vm_error(vm, "type_error",
                     "value '%s' does not support subscriptable",
@@ -1049,6 +1083,9 @@ newframe: /* a new call frame */
                 be_dofunc(vm, top, 3); /* call method 'setitem' */
                 vm->top -= 4;
                 reg = vm->reg;
+            } else if (var_iscomptr(a) && var_isint(b) && var_isint(c)) {
+                uint8_t * p = var_toobj(a);
+                p[var_toint(b)] = var_toint(c);
             } else {
                 vm_error(vm, "type_error",
                     "value '%s' does not support index assignment",
